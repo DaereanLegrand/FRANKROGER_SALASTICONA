@@ -2,11 +2,11 @@
 usar string, es un vector de caracteres
 stl     vector<int>
 
-          filas (digamos 3)
+          filas (int)
         /
 clave 
         \
-          columnas (digamos 6)
+          columnas (int)
 
 menasaje = "hola como estan"
 
@@ -18,10 +18,12 @@ array = {
     {t,a,n, , , }
     }
 
+    //En caso la clave sea de 3,5   3 filas, 5 columnas
     0   1   2   3   4
     5   6   7   8   9
     10  11  12  13  14
 
+    //En caso la clave sea de 3,6   3 filas, 6 columnas
     0   1   2   3   4   5
     6   7   8   9   10  11
     12  13  14  15  16  17
@@ -29,8 +31,6 @@ array = {
 extraer clave = "hotomalona   e cs "
 
 para desencriptar hacerlo inversamente 
-
-NO USAR MATRICES SOLO EL VECTOR STRING
 
 */
 
@@ -48,18 +48,26 @@ class algoritmo
     public:
     algoritmo()
     {
-        int tempClave = getClave();
-        columnas = tempClave % 10;
-        filas = (tempClave - columnas) / 10;
+        cout << "COLUMNAS ";
+        columnas = getClave();
+        cout << "FILAS ";
+        filas = getClave();
+        cout << endl;
     }
 
-    algoritmo(int c_clave)
+    algoritmo(int c_clave) //CONSTRUCTOR QUE RECIBE SOLO UNA CLAVE, LA DIVIDE EN DECENAS Y UNIDADES
     {
         columnas = c_clave % 10;
         filas = (c_clave - columnas) / 10;
     }
 
-    int getClave()
+    algoritmo(int c_columnas, int c_filas) //RECIBE 2 PARAMETROS, PARA LA ENCRIPTACION
+    {
+        filas = c_filas;
+        columnas = c_columnas;
+    }
+
+    int getClave() //RECIBE UNA CLAVE
     {
         int tempClave;
         cout << "Ingrese la clave: ";
@@ -67,32 +75,22 @@ class algoritmo
         return tempClave;
     }
 
-    string encrypt(string cadena)
+    string encrypt(string cadena) 
     {
-        if (cadena.length() < columnas * filas)
-        {
-            int add = (columnas * filas) - cadena.length();
+        fill(cadena); //LLENAR LA CADENA 
 
-            for (int i = 0; i < add; i++)
-            {
-                cadena.append(" ");
-            }
-        
-        }
-
-        int proof = 0;
+        int cont = 0;
         string encriptado = cadena;
 
         for (int j = 0; j < columnas; j++)
         {
             for (int i = 0; i < filas; i++)
             {
-                if (proof < cadena.length()) 
+                if (cont < cadena.length()) 
                 {
-                    int ind_cad = (i * columnas) + j;
-                    //cout << "ind_cad: " << ind_cad << '\t' << "proof: " << proof << endl;
-                    encriptado[proof] = cadena[ind_cad];
-                    proof++;
+                    int ind_cad = (i * columnas) + j; //LOGICA
+                    encriptado[cont] = cadena[ind_cad]; //Indice cont, en orden recorre el string copiado, reemplaza en el nuevo string
+                    cont++;
                 }
             }
         }
@@ -102,16 +100,7 @@ class algoritmo
 
     string decrypt(string cadena)
     {
-        if (cadena.length() < columnas * filas)
-        {
-            int add = (columnas * filas) - cadena.length();
-
-            for (int i = 0; i < add; i++)
-            {
-                cadena.append(" ");
-            }
-        
-        }
+        fill(cadena);
 
         int cont = 0;
         string desencriptado = cadena;
@@ -122,15 +111,28 @@ class algoritmo
             {
                 if (cont < cadena.length()) 
                 {
-                    int ind_cad = (i * columnas) + j;
-                    //cout << "ind_cad: " << ind_cad << '\t' << "proof: " << cont << endl;
-                    desencriptado[ind_cad] = cadena[cont];
+                    int ind_cad = (i * columnas) + j; //LOGICA
+                    desencriptado[ind_cad] = cadena[cont]; //Indice cont, en orden recorre el string copiado, reemplaza en el nuevo string
                     cont++;
                 }
             }
         }
 
         return desencriptado;
+    }
+
+    void fill (string &cadena)
+    {
+        if (cadena.length() < columnas * filas)
+        {
+            int add = (columnas * filas) - cadena.length();
+
+            for (int i = 0; i < add; i++)
+            {
+                cadena.append(" ");
+            }
+        
+        }
     }
 
 };
@@ -144,9 +146,16 @@ int main ()
     algoritmo emisor;
     algoritmo receptor;
 
-    cout << "mensaje: " << mensaje << endl;
+    /*
+    algoritmo emisor(5,5);
+    algoritmo receptor(5,5);
+    algoritmo emisor(55);
+    algoritmo receptor(55);
+    */
+
+    cout << "mensaje: " << mensaje << endl << endl;
     string msj_cifrado = emisor.encrypt(mensaje);
-    cout << "mensaje cifrado: " << msj_cifrado << endl;
+    cout << "mensaje cifrado: " << msj_cifrado << endl << endl;
     string msj_descifrado = receptor.decrypt(msj_cifrado);
     cout << "mensaje descifrado: " << msj_descifrado << endl << endl;
 
