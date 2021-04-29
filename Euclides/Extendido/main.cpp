@@ -48,24 +48,6 @@ int whiMcd(int a, int b, int &x, int &y)
     return b;
 }
 
-//RECURSIVIDAD PARA HALLAR EL RESULTADO
-int mcd(int a, int b)
-{
-    int res = a - ((a / b) * b);
-    if (res == 0)
-    {
-        return b;
-    }
-    else
-    {
-        a = b;
-        b = res;
-        return mcd(a, b);
-    }
-
-    return 0;
-}
-
 int main()
 {
     int i = 0;
