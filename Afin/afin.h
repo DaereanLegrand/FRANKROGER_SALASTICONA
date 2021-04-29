@@ -79,7 +79,7 @@ class affineCypher: public alfabeto
                     {
                         int tempX = 0;
                         int tempY = 0;
-                        int modulo = extMcd(keyA, keyB, tempX, tempY);
+                        int module = extMcd(keyA, sizeAlpha, tempX, tempY);
                         int temp = tempX * (j - keyB);
                         //if (temp >= sizeAlpha) modulo(temp, sizeAlpha)
                         if (temp >= sizeAlpha || temp < 0) 
