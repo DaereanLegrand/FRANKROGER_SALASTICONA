@@ -1,3 +1,4 @@
+#pragma once
 #include <string>
 #include "functions.h"
 
@@ -5,93 +6,108 @@ using namespace std;
 
 class alfabeto
 {
-    public:
-        int sizeAlpha;
-        char* alpha;
-        int sizeVocales;
-        char* vocales;
+public:
+    int sizeAlpha;
+    char* alpha;
+    int sizeVocales;
+    char* vocales;
 
-        alfabeto(string cadena, string uvocales = "aeiou")
+    alfabeto(string cadena, string uvocales = "aeiou")
+    {
+        sizeAlpha = cadena.length();
+        alpha = new char[sizeAlpha];
+        sizeVocales = uvocales.length();
+        vocales = new char[sizeVocales];
+
+        for (int i = 0; i < sizeAlpha; i++)
         {
-            sizeAlpha = cadena.length();
-            alpha = new char[sizeAlpha];
-            sizeVocales = uvocales.length();
-            vocales = new char[sizeVocales];
-
-            for (int i = 0; i < sizeAlpha; i++)
-            {
-                alpha[i] = cadena[i];
-            }
-
-            for (int i = 0; i < sizeVocales; i++)
-            {
-                vocales[i] = uvocales[i];
-            }
+            alpha[i] = cadena[i];
         }
+
+        for (int i = 0; i < sizeVocales; i++)
+        {
+            vocales[i] = uvocales[i];
+        }
+    }
+
+    bool inVocales(char a)
+    {
+        a = tolower(a);
+        for (int i = 0; i < sizeVocales; i++)
+        {
+            if (a == vocales[i] && a != ' ') return true;
+        }
+        return false;
+    }
+
 };
 
-class affineCypher: public alfabeto 
+class affineCypher : public alfabeto
 {
-    private:
-        int keyA;
-        int keyB;
+private:
+    int keyA;
+    int keyB;
 
-    public:
-        
-        affineCypher(int uKeyA, int uKeyB, string uAlfabeto):
-            alfabeto(uAlfabeto), keyA(uKeyA), keyB(uKeyB)
+public:
+
+    affineCypher(int uKeyA, int uKeyB, string uAlfabeto) :
+        alfabeto(uAlfabeto), keyA(uKeyA), keyB(uKeyB)
+    {
+        if (mcd(keyA, sizeAlpha) != 1)
         {
-            //comprobar claves NO OLVIDAR
+            cout << "Brutal Error. La clave A es incorrecta" << endl;
+            cout << mcd(keyA, sizeAlpha);
+            exit(EXIT_FAILURE);
         }
+    }
 
-        string cypher(string cadena)
+    string cypher(string cadena)
+    {
+        string encrypted((int)cadena.length(), ' ');
+
+        for (int i = 0; i < (int)cadena.length(); i++)
         {
-            string encrypted((int)cadena.length(), ' ');
-
-            for (int i = 0; i < (int)cadena.length(); i++)
+            for (int j = 0; j < sizeAlpha; j++)
             {
-                for (int j = 0; j < sizeAlpha; j++)
+                if (cadena[i] == alpha[j])
                 {
-                    if (cadena[i] == alpha[j])
-                    {
-                        int temp = keyA * j;
-                        //if (temp >= sizeAlpha) modulo(temp, sizeAlpha);
-                        temp += keyB;
-                        if (temp >= sizeAlpha) temp = modulo(temp, sizeAlpha);
-                        encrypted[i] = alpha[temp];
-                    }
+                    int temp = keyA * j;
+                    //if (temp >= sizeAlpha) modulo(temp, sizeAlpha);
+                    temp += keyB;
+                    if (temp >= sizeAlpha) temp = modulo(temp, sizeAlpha);
+                    encrypted[i] = alpha[temp];
                 }
             }
-
-            return encrypted;
         }
 
-        string decypher(string cadena)
+        return encrypted;
+    }
+
+    string decypher(string cadena)
+    {
+        string decrypted((int)cadena.length(), ' ');
+        // x = a^-1 (y - b) SACAR MODULO SI ES MAYOR AL TAMANO DEL ALFABETO, O SI ES MENOR
+
+        for (int i = 0; i < (int)cadena.length(); i++)
         {
-            string decrypted((int)cadena.length(), ' ');
-            // x = a^-1 (y - b) SACAR MODULO SI ES MAYOR AL TAMANO DEL ALFABETO, O SI ES MENOR
-            
-            for (int i = 0; i < (int)cadena.length(); i++)
+            for (int j = 0; j < sizeAlpha; j++)
             {
-                for (int j = 0; j < sizeAlpha; j++)
+                if (cadena[i] == alpha[j])
                 {
-                    if (cadena[i] == alpha[j])
+                    int tempX = 0;
+                    int tempY = 0;
+                    int module = extMcd(keyA, sizeAlpha, tempX, tempY);
+                    int temp = tempX * (j - keyB);
+                    //if (temp >= sizeAlpha) modulo(temp, sizeAlpha)
+                    if (temp >= sizeAlpha || temp < 0)
                     {
-                        int tempX = 0;
-                        int tempY = 0;
-                        int module = extMcd(keyA, sizeAlpha, tempX, tempY);
-                        int temp = tempX * (j - keyB);
-                        //if (temp >= sizeAlpha) modulo(temp, sizeAlpha)
-                        if (temp >= sizeAlpha || temp < 0) 
-                        {
-                            temp = modulo(temp, sizeAlpha);
-                        }
-                        decrypted[i] = alpha[temp];
+                        temp = modulo(temp, sizeAlpha);
                     }
+                    decrypted[i] = alpha[temp];
                 }
             }
-
-            return decrypted;
         }
 
-}; 
+        return decrypted;
+    }
+};

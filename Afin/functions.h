@@ -1,4 +1,5 @@
-int extMcd(int a, int b, int &x, int &y)
+#pragma once
+int extMcd(int a, int b, int& x, int& y)
 {
     int q = a / b;
     int res = a - (q * b);
@@ -27,7 +28,7 @@ int extMcd(int a, int b, int &x, int &y)
         t = t1 - (q * t2);
 
     }
-    
+
     x = s2;
     y = t2;
 
@@ -39,9 +40,9 @@ int mcd(int a, int b)
     int res = a - ((a / b) * b);
     while (res != 0)
     {
-       a = b;
-       b = res;
-       res = a - ((a / b) * b);
+        a = b;
+        b = res;
+        res = a - ((a / b) * b);
     }
     return b;
 }
@@ -60,4 +61,3 @@ int modulo(int a, int b = 26)
 
     return res;
 }
-
