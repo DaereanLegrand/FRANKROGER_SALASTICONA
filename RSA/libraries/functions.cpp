@@ -1,18 +1,26 @@
-#pragma once
-#include "../libraries/functions.cpp"
+#include "../headers/functions.h"
+#include <NTL/ZZ.h>
+#include <ctime>
+#include <cstdlib>
 
-int extMcd(int a, int b, int& x)
+using namespace NTL;
+
+ZZ extMcdZZ(ZZ a, ZZ b, ZZ& x)
 {
-    int q = a / b;
-    int res = a - (q * b);
+    ZZ q = a / b;
+    ZZ res = a - (q * b);
 
-    int s1 = 1;
-    int s2 = 0;
-    int s = s1 - (q * s2);
+    ZZ s1;
+    s1 = 1;
+    ZZ s2;
+    s2 = 0;
+    ZZ s = s1 - (q * s2);
 
-    int t1 = 0;
-    int t2 = 1;
-    int t = t1 - (q * t2);
+    ZZ t1;
+    t1 = 0;
+    ZZ t2;
+    t2 = 1;
+    ZZ t = t1 - (q * t2);
 
     while (res > 0)
     {
@@ -36,22 +44,23 @@ int extMcd(int a, int b, int& x)
     return b;
 }
 
-int mcd(int a, int b)
+ZZ mcdZZ(ZZ a, ZZ b)
 {
-    int res = a - ((a / b) * b);
+    ZZ res = a - ((a / b) * b);
     while (res != 0)
     {
         a = b;
         b = res;
         res = a - ((a / b) * b);
+        //cout << a << " = (" << a / b << ") * " << b << " + " << res << endl;
     }
     return b;
 }
 
-int modulo(int a, int b = 26)
+ZZ moduloZZ(ZZ a, ZZ b)
 {
-    int q = a / b;
-    int res = a - (q * b);
+    ZZ q = a / b;
+    ZZ res = a - (q * b);
 
     if (res < 0)
     {
@@ -63,9 +72,65 @@ int modulo(int a, int b = 26)
     return res;
 }
 
-bool isPrime (int a)
+ZZ powerZZextra(ZZ a, ZZ b)
 {
-    for (int i = 2; i < a; i++)
+    ZZ temp = a;
+    while (b > 1)
+    {
+        a = a * temp;
+        b--;
+    }
+    return a;
+}
+
+ZZ powerZZ(ZZ a, ZZ b, ZZ N)
+{
+    ZZ cumulativeExponent, newB, nMod, lastSquare, lastExponent, otherSquare, two;
+    cumulativeExponent = 1;
+    newB = b;
+    lastSquare = a;
+    lastExponent = 0;
+    otherSquare = 1;
+    two = 2;
+    do
+    {
+        nMod = moduloZZ(newB, two);
+        if (cumulativeExponent != 1) lastSquare = moduloZZ(powerZZextra(lastSquare, two), N);
+        if (nMod == 1)
+        {
+            lastExponent = lastExponent + cumulativeExponent;
+            otherSquare = moduloZZ(lastSquare * otherSquare, N);
+        }
+        newB = newB / 2;
+        cumulativeExponent = cumulativeExponent * 2;
+    }
+    while (newB > 0);
+    return otherSquare;
+}
+
+
+ZZ getPrime(ZZ diff)
+{
+    int tempo = 0;
+    ZZ temp;
+    temp = 0;
+    srand(time(NULL));
+
+    while(true)
+    {    
+        tempo = rand() % 9999;
+        temp = tempo;
+        if (isPrime(temp) && temp > 2 && temp != diff)
+        {
+            return temp;
+        }
+    }
+}
+
+bool isPrime (ZZ a)
+{
+    ZZ i;
+    for (i = 2; i < a; i++)
     {
         if (a % i == 0) return false;
     }

@@ -1,9 +1,12 @@
-#pragma once
+#include <NTL/ZZ.h>
+
+using namespace NTL;
+
 class source
 {
     public:
-        int publicKey;
-        int N;
-        source (int, int);
-        int cypher (int);
+        ZZ publicKey;
+        ZZ N;
+        source (ZZ, ZZ);
+        ZZ cypher (ZZ);
 };

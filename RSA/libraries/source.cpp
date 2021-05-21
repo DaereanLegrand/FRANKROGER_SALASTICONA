@@ -1,15 +1,16 @@
-#pragma once
 #include <math.h>
+#include <NTL/ZZ.h>
 #include "../headers/source.h"
 #include "../headers/functions.h"
 
-source::source(int userPublic, int uN) :
+source::source(ZZ userPublic, ZZ uN) :
     publicKey(userPublic), N(uN)
 {
 
 }
 
-int source::cypher(int mensaje)
+ZZ source::cypher(ZZ mensaje)
 {
-    return mcd(pow(mensaje, publicKey), N);
+    //return moduloZZ(powerZZ(mensaje, publicKey), N);
+    return powerZZ(mensaje, publicKey, N);
 }

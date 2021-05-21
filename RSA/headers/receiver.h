@@ -1,10 +1,13 @@
-#pragma once
+#include <NTL/ZZ.h>
+
+using namespace NTL;
+
 class receiver
 {
     private:
-        int p, q, fiN, d;
+        ZZ p, q, fiN, d;
     public:
-        int e, N;
-        receiver (int, int);
-        int decypher (int);
+        ZZ e, N;
+        receiver (ZZ, ZZ);
+        ZZ decypher (ZZ);
 };
