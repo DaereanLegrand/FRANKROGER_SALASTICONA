@@ -61,14 +61,11 @@ ZZ moduloZZ(ZZ a, ZZ b)
 {
     ZZ q = a / b;
     ZZ res = a - (q * b);
-
     if (res < 0)
     {
         q--;
         res = a - (q * b);
-
     }
-
     return res;
 }
 
