@@ -12,19 +12,25 @@ using std::endl;
 
 int main()
 {
-    cout << "RSA: =================\n";
+    //cout << "RSA: =================\n";
     ZZ p, q, res;
     
     p = getPrime();
     q = getPrime(p);
 
-    receiver miReceptor(p, q);
-    source miEmisor(miReceptor.e, miReceptor.N);
+    //receiver miReceptor(p, q);
+    //source miEmisor(miReceptor.e, miReceptor.N);
 
-    ZZ leMensaje;
-    leMensaje = 156478;
-    ZZ mensajeC = miEmisor.cypher(leMensaje);
-    cout << "El mensaje cifrado es: " << mensajeC << endl;
-    ZZ mensajeD = miReceptor.decypher(mensajeC);
-    cout << "El mensaje decifrado es: " << mensajeD << endl;
+    //ZZ leMensaje;
+    //leMensaje = 156478;
+    //ZZ mensajeC = miEmisor.cypher(leMensaje);
+    //cout << "El mensaje cifrado es: " << mensajeC << endl;
+    //ZZ mensajeD = miReceptor.decypher(mensajeC);
+    //cout << "El mensaje decifrado es: " << mensajeD << endl;
+    
+    source extra(p, q, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz123456789 .,/-");
+    vector <string> myBlocks = extra.stringDivider("ABCDEFGHIJKLMNOP", 2);
+    string cadena = extra.converter(myBlocks);
+
+    cout << cadena << endl;
 }
