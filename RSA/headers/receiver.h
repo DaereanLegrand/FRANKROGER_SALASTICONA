@@ -2,14 +2,15 @@
 #include <string>
 
 using namespace NTL;
+using std::string;
 
 class receiver
 {
     private:
         ZZ p, q, fiN, d;
-        std::string alphabet;
+        string alphabet;
     public:
         ZZ e, N;
-        receiver (ZZ, ZZ);
-        ZZ decypher (ZZ);
+        receiver (int, string);
+        string decypher (string);
 };

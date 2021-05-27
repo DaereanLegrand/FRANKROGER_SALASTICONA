@@ -1,4 +1,5 @@
 #include <math.h>
+#include <string>
 #include <NTL/ZZ.h>
 #include <ctime>
 #include "../headers/functions.h"
@@ -7,39 +8,51 @@
 
 #include <iostream>
 
-using namespace std;
+using std::string;
 using namespace NTL;
 
-receiver::receiver(ZZ p_key, ZZ q_key) :
-    p(p_key), q(q_key), N(p_key * q_key), fiN((p_key - 1) * (q_key - 1))
+receiver::receiver(int nBits, string uAlphabet) :
+    alphabet(uAlphabet)
 {
-    srand(time(NULL));
-    ZZ tempE; 
-    ZZ randTemp;
-    randTemp = rand() % 1000;
-    tempE = 1 + moduloZZ(randTemp, fiN - 1);
-    while (!isPrime(tempE) && tempE > 2)
+    p = RandomPrime_ZZ(nBits);
+    q = RandomPrime_ZZ(nBits);
+    N = p * q;
+    fiN = (p - 1) * (q - 1);
+    e = RandomBnd(fiN - 1) + 1;
+    while (mcdZZ(e, fiN) != 1)
     {
-        randTemp = rand() % 1000;
-        tempE = 1 + moduloZZ(randTemp, fiN - 1); //FLAG
+        e = RandomBnd(fiN - 1) + 1;
     }
-    e = tempE;
-    extMcdZZ(e, fiN, d);
-    d = moduloZZ(d, fiN);
+    d = moduloZZ(inversa(e, fiN), fiN);
 
-    cout << "p: " << p << endl;
-    cout << "q: " << q << endl;
-    cout << "N: " << N << endl;
-    cout << "fiN: " << fiN << endl;
-    cout << "e: " << e << endl;
-    cout << "d: " << d << endl;
-
-
+    std::cout << "p: " << p << std::endl;
+    std::cout << "q: " << q << std::endl;
+    std::cout << "N: " << N << std::endl;
+    std::cout << "fiN: " << fiN << std::endl;
+    std::cout << "e: " << e << std::endl;
+    std::cout << "d: " << d << std::endl;
 }
 
-ZZ receiver::decypher(ZZ mensajeCifrado)
+string receiver::decypher(string message)
 {
-
-    return powerZZ(mensajeCifrado, d, N);
-    //return moduloZZ(powerZZ(mensajeCifrado, d), N);
+    string toReturn;
+    int availableDigits = std::to_string((int)alphabet.length()).length();
+    int nDigits = (int)zToString(N).length();
+    vector<string> temp = stringToVector(message, nDigits);
+    vector<string> tempDecypher;
+    for (vector<string>::iterator i = temp.begin(); i != temp.end(); i++)
+    {
+        string temp1 = *i;
+        ZZ zTemp(INIT_VAL, temp1.c_str());
+        temp1 = zToString(powerZZ(zTemp, d, N));
+        tempDecypher.push_back(string((nDigits - 1) - (int)temp1.length(), '0') + temp1);
+    }
+    temp = stringToVector(vectorToString(tempDecypher), availableDigits);
+    for (vector<string>::iterator i = temp.begin(); i != temp.end(); i++)
+    {
+        string temp1 = *i;
+        int iTemp = std::stoi(temp1);
+        toReturn.append(alphabet, iTemp, 1);
+    }
+    return toReturn;
 }

@@ -1,6 +1,7 @@
 //#include <NTL/ZZ.h>
 #include "../headers/source.h"
 #include "../headers/functions.h"
+#include <cstring>
 #include <iostream>
 
 using std::string;
@@ -11,42 +12,25 @@ source::source(ZZ userPublic, ZZ uN, string uAlphabet) :
 
 }
 
-ZZ source::cypherZZ(ZZ mensaje)
-{
-    //return moduloZZ(powerZZ(mensaje, publicKey), N);
-    return powerZZ(mensaje, publicKey, N);
-}
-
-vector <string> source::stringDivider(string message, int ddigits)
-{
-    vector <string> firstBlock;
-    for (string::iterator i = message.begin(); i != message.end(); i++)
-    {
-        //IF NOT FOUND WILL RETURN 0
-        string temp = std::to_string(alphabet.find(*i));
-        //std::cout << temp.length();
-        string block = string(ddigits - (int)temp.length(), '0') + temp;
-        firstBlock.push_back(block);
-    }
-    return firstBlock;
-}
-
-string source::converter(vector <string> blocks)
-{
-    string final;
-    if (!blocks.empty())
-    {
-        for (vector <string>::iterator i = blocks.begin(); i != blocks.end(); i++)
-        {
-            final.append(*i);
-        }
-    }
-    return final;
-}
-
 string source::cypher(string message)
 {
-    //alphabet.back(); 
+    //std::cout << "Clave publica:\t " << publicKey << std::endl;
+    //std::cout << "Esto es N:\t " << N << std::endl;
     int availableDigits = std::to_string((int)alphabet.length()).length();
-    return string();
+    int nDigits = (int)zToString(N).length();
+    vector<string> temp = stringToVector(vectorToString(stringToVectorIndex(message, availableDigits, alphabet)), nDigits - 1);
+    vector<string> tempCypher;
+    for (vector<string>::iterator i = temp.begin(); i != temp.end(); i++)
+    {
+        string temp1 = *i;
+        std::cout << "temp1:\t" << temp1 << std::endl;
+        std::cout << "temp1.c_str():\t" << temp1.c_str() << std::endl;
+        ZZ zTemp(INIT_VAL, temp1.c_str());
+        std::cout << "temp antes:" << '\t' << zTemp << std::endl;
+        temp1 = zToString(powerZZ(zTemp, publicKey, N));
+        std::cout << string(nDigits - (int)temp1.length(), '0') + temp1 << std::endl;
+        tempCypher.push_back(string(nDigits - (int)temp1.length(), '0') + temp1);
+    }
+
+    return vectorToString(tempCypher);
 }

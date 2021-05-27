@@ -4,6 +4,7 @@
 #include "./headers/source.h"
 #include "headers/functions.h"
 
+#include <vector>
 // g++ -g -O2 -std=c++11 -pthread -march=native "$string/$file" -o "$string/$output" -lntl -lgmp -lm
 
 using std::cin;
@@ -12,25 +13,15 @@ using std::endl;
 
 int main()
 {
-    //cout << "RSA: =================\n";
-    ZZ p, q, res;
-    
-    p = getPrime();
-    q = getPrime(p);
+    string alpha = "abcdefghijklmnopqrstuvwxyz ";
+    receiver myReceiver(11, alpha);
+    source mySource(myReceiver.e, myReceiver.N, alpha);
 
-    //receiver miReceptor(p, q);
-    //source miEmisor(miReceptor.e, miReceptor.N);
-
-    //ZZ leMensaje;
-    //leMensaje = 156478;
-    //ZZ mensajeC = miEmisor.cypher(leMensaje);
-    //cout << "El mensaje cifrado es: " << mensajeC << endl;
-    //ZZ mensajeD = miReceptor.decypher(mensajeC);
-    //cout << "El mensaje decifrado es: " << mensajeD << endl;
-    
-    source extra(p, q, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz123456789 .,/-");
-    vector <string> myBlocks = extra.stringDivider("ABCDEFGHIJKLMNOP", 2);
-    string cadena = extra.converter(myBlocks);
-
-    cout << cadena << endl;
+    string mensaje;
+    cout << "Ingrese el mensaje a ser cifrado: "; 
+    cin >> mensaje;
+    string mensajeCifrado = mySource.cypher(mensaje);
+    cout << "El mensajeCifrado es: " << mensajeCifrado << endl;
+    string mensajeDecifrado = myReceiver.decypher(mensajeCifrado);
+    cout << "El mensajeDecifrado es: " << mensajeDecifrado << endl;
 }

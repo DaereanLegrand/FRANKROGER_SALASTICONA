@@ -14,8 +14,8 @@ class source
         ZZ publicKey;
         ZZ N;
         source (ZZ, ZZ, string);
-        ZZ cypherZZ (ZZ);
-        vector <string> stringDivider(string, int);
-        string converter (vector <string>);
+        //vector <string> stringToVector(string, int);
+        //vector <string> stringToVectorIndex(string, int);
+        //string vectorToString(vector <string>);
         string cypher(string);
 };

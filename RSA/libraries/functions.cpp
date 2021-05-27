@@ -2,11 +2,15 @@
 #include <NTL/ZZ.h>
 #include <ctime>
 #include <cstdlib>
+#include <sstream>
+#include <string>
+#include <vector>
 
 using namespace NTL;
 
-ZZ extMcdZZ(ZZ a, ZZ b, ZZ& x)
+std::vector<ZZ> extMcdZZ(ZZ a, ZZ b)
 {
+    std::vector<ZZ> temp;
     ZZ q = a / b;
     ZZ res = a - (q * b);
 
@@ -39,9 +43,16 @@ ZZ extMcdZZ(ZZ a, ZZ b, ZZ& x)
 
     }
 
-    x = s2;
+    temp.push_back(b);
+    temp.push_back(s2);
+    temp.push_back(t2);
 
-    return b;
+    return temp;
+}
+
+ZZ inversa(ZZ a, ZZ b)
+{
+    return extMcdZZ(a, b).at(1);
 }
 
 ZZ mcdZZ(ZZ a, ZZ b)
@@ -133,3 +144,49 @@ bool isPrime (ZZ a)
     }
     return true;
 }
+
+std::string zToString(ZZ z) {
+    std::stringstream buffer;
+    buffer << z;
+    return buffer.str();
+}
+
+
+vector<string> stringToVector(string message, int ddigits)
+{
+    vector<string> blocks;
+    for (int i = 0; i < (int)message.length(); i+=ddigits)
+    {
+        blocks.push_back(string(message, i, ddigits));
+    }
+    return blocks;
+}
+
+vector<string> stringToVectorIndex(string message, int ddigits, string alphabet)
+{
+    vector<string> firstBlock;
+    for (string::iterator i = message.begin(); i != message.end(); i++)
+    {
+        //IF NOT FOUND WILL RETURN 0
+        string temp = std::to_string(alphabet.find(*i));
+        //std::cout << temp.length();
+        string block = string(ddigits - (int)temp.length(), '0') + temp;
+        firstBlock.push_back(block);
+    }
+    return firstBlock;
+}
+
+string vectorToString(vector<string> blocks)
+{
+    string final;
+    if (!blocks.empty())
+    {
+        for (vector<string>::iterator i = blocks.begin(); i != blocks.end(); i++)
+        {
+            final.append(*i);
+        }
+    }
+    return final;
+}
+
+
